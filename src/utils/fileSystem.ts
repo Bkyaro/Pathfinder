@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-interface FileNode {
+export interface FileNode {
 	name: string;
 	path: string;
 	type: "file" | "directory";
