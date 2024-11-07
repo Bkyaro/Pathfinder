@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import path from "path";
 
 function createWindow() {
@@ -16,6 +16,14 @@ function createWindow() {
 	} else {
 		win.loadFile(path.join(__dirname, "../dist/index.html"));
 	}
+
+	// 添加选择文件夹的IPC监听器
+	ipcMain.handle("select-folder", async () => {
+		const result = await dialog.showOpenDialog(win, {
+			properties: ["openDirectory"],
+		});
+		return result.filePaths[0];
+	});
 }
 
 app.whenReady().then(() => {
