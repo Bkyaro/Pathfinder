@@ -1,12 +1,21 @@
 import React from "react";
 import Tree from "react-d3-tree";
 import { FileNode } from "../utils/fileSystem";
+import { ListView } from "./ListView";
 
 interface FileTreeProps {
 	data: FileNode;
+	zoom: number;
+	onNodeSelect: (node: FileNode) => void;
+	view: "tree" | "list";
 }
 
-export const FileTree: React.FC<FileTreeProps> = ({ data }) => {
+export const FileTree: React.FC<FileTreeProps> = ({
+	data,
+	zoom,
+	onNodeSelect,
+	view,
+}) => {
 	const formatData = (node: FileNode): any => {
 		return {
 			name: node.name,
@@ -18,9 +27,17 @@ export const FileTree: React.FC<FileTreeProps> = ({ data }) => {
 		};
 	};
 
-	// 自定义节点渲染
 	const renderCustomNode = ({ nodeDatum, toggleNode }: any) => (
-		<g onClick={toggleNode}>
+		<g
+			onClick={() => {
+				toggleNode();
+				onNodeSelect({
+					name: nodeDatum.name,
+					path: nodeDatum.attributes.path,
+					type: nodeDatum.attributes.type,
+				});
+			}}
+		>
 			<circle
 				r={10}
 				fill={
@@ -38,6 +55,10 @@ export const FileTree: React.FC<FileTreeProps> = ({ data }) => {
 		</g>
 	);
 
+	if (view === "list") {
+		return <ListView data={data} onNodeSelect={onNodeSelect} />;
+	}
+
 	return (
 		<div
 			style={{
@@ -53,7 +74,7 @@ export const FileTree: React.FC<FileTreeProps> = ({ data }) => {
 				translate={{ x: window.innerWidth / 2, y: 50 }}
 				renderCustomNodeElement={renderCustomNode}
 				separation={{ siblings: 2, nonSiblings: 2 }}
-				zoom={0.8}
+				zoom={zoom}
 			/>
 		</div>
 	);
