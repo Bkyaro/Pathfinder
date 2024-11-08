@@ -1,8 +1,34 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
+const fs = require("fs");
 
 // 使用 process.cwd() 获取当前工作目录
 const ROOT_PATH = process.cwd();
+
+function scanDirectory(dirPath) {
+	const stats = fs.statSync(dirPath);
+	const baseName = path.basename(dirPath);
+
+	if (!stats.isDirectory()) {
+		return {
+			name: baseName,
+			path: dirPath,
+			type: "file",
+		};
+	}
+
+	const children = fs.readdirSync(dirPath).map((file) => {
+		const fullPath = path.join(dirPath, file);
+		return scanDirectory(fullPath);
+	});
+
+	return {
+		name: baseName,
+		path: dirPath,
+		type: "directory",
+		children,
+	};
+}
 
 function createWindow() {
 	const win = new BrowserWindow({
@@ -30,7 +56,22 @@ function createWindow() {
 		const result = await dialog.showOpenDialog(win, {
 			properties: ["openDirectory"],
 		});
-		return result.filePaths[0];
+		if (result.filePaths[0]) {
+			const dirPath = result.filePaths[0];
+			const treeData = scanDirectory(dirPath);
+            console.log(" { path: dirPath, treeData }", { path: dirPath, treeData })
+			return { path: dirPath, treeData };
+		}
+		return null;
+	});
+
+	ipcMain.handle("get-file-stats", async (_, filePath) => {
+		const stats = fs.statSync(filePath);
+		return {
+			size: stats.size,
+			created: stats.birthtime,
+			modified: stats.mtime,
+		};
 	});
 
 	// 添加错误处理

@@ -1,0 +1,82 @@
+.file-info {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-info h3 {
+  margin: 0 0 16px 0;
+  color: #1f2937;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+}
+
+.label {
+  font-weight: 500;
+  color: #4b5563;
+  min-width: 100px;
+  font-size: 14px;
+}
+
+.info-item span:not(.label) {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+/* 文件类型图标样式 */
+.file-type-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+/* 文件大小样式 */
+.size-info {
+  color: #6b7280;
+}
+
+/* 时间信息样式 */
+.time-info {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* 悬停效果 */
+.info-item:hover {
+  background-color: #f9fafb;
+  border-radius: 4px;
+  padding: 4px;
+  margin: -4px;
+}
+
+/* 错误状态 */
+.error-state {
+  color: #ef4444;
+  padding: 12px;
+  background: #fee2e2;
+  border-radius: 4px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #6b7280;
+} 

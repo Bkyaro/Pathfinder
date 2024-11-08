@@ -1,68 +1,80 @@
 import { useState } from "react";
 import "./App.css";
 import { FileTree } from "./components/FileTree";
-import { FileNode, scanDirectory } from "./utils/fileSystem";
+import { FileInfo } from "./components/FileInfo";
+import { ViewControls } from "./components/ViewControls";
 
 function App() {
-	const [treeData, setTreeData] = useState<FileNode | null>(null);
+	const [treeData, setTreeData] = useState<any | null>(null);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [selectedNode, setSelectedNode] = useState<any | null>(null);
+	const [currentView, setCurrentView] = useState<"tree" | "list">("tree");
+	const [zoom, setZoom] = useState(0.8);
 
 	const handleSelectFolder = async () => {
 		try {
-			const folderPath = await window.electronAPI.selectFolder();
-			if (folderPath) {
-				const data = scanDirectory(folderPath);
-				setTreeData(data);
+			const result = await window.electronAPI.selectFolder();
+			if (result) {
+				setTreeData(result.treeData);
 			}
 		} catch (error) {
 			console.error("选择文件夹时出错:", error);
 		}
 	};
 
-	const filterTree = (node: FileNode, term: string): FileNode | null => {
-		if (node.name.toLowerCase().includes(term.toLowerCase())) {
-			return node;
-		}
-
-		if (node.children) {
-			const filteredChildren = node.children
-				.map((child) => filterTree(child, term))
-				.filter((child): child is FileNode => child !== null);
-
-			if (filteredChildren.length > 0) {
-				return {
-					...node,
-					children: filteredChildren,
-				};
-			}
-		}
-
-		return null;
+	const handleNodeSelect = (node: any) => {
+		setSelectedNode(node);
 	};
 
-	const filteredData =
-		treeData && searchTerm ? filterTree(treeData, searchTerm) : treeData;
+	const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.1, 2));
+	const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.1, 0.3));
+
+	const handleViewChange = (view: "tree" | "list") => {
+		setCurrentView(view);
+	};
 
 	return (
 		<div className="app-container">
 			<div className="header">
 				<button onClick={handleSelectFolder}>选择文件夹</button>
 				{treeData && (
-					<input
-						type="text"
-						placeholder="搜索文件或文件夹..."
-						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
-						className="search-input"
-					/>
+					<>
+						<input
+							type="text"
+							placeholder="搜索文件或文件夹..."
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							className="search-input"
+						/>
+						<ViewControls
+							onZoomIn={handleZoomIn}
+							onZoomOut={handleZoomOut}
+							onExpandAll={() => {}}
+							onCollapseAll={() => {}}
+							onViewChange={handleViewChange}
+							currentView={currentView}
+						/>
+					</>
 				)}
 			</div>
-			<div className="tree-container">
-				{filteredData ? (
-					<FileTree data={filteredData} />
-				) : (
-					<div className="empty-state">
-						请选择一个文件夹来查看其结构
+			<div className="main-content">
+				<div className="tree-container">
+					{treeData ? (
+						<FileTree
+							data={treeData}
+							zoom={zoom}
+							onNodeSelect={handleNodeSelect}
+							view={currentView}
+						/>
+					) : (
+						<div className="empty-state">
+							请选择一个文件夹来查看其结构
+						</div>
+					)}
+				</div>
+				{selectedNode && (
+					<div className="info-panel">
+						<FileInfo node={selectedNode} />
 					</div>
 				)}
 			</div>
