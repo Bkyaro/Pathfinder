@@ -1,5 +1,8 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import path from "path";
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const path = require("path");
+
+// 使用 process.cwd() 获取当前工作目录
+const ROOT_PATH = process.cwd();
 
 function createWindow() {
 	const win = new BrowserWindow({
@@ -7,31 +10,47 @@ function createWindow() {
 		height: 800,
 		webPreferences: {
 			nodeIntegration: true,
-			contextIsolation: false,
+			contextIsolation: true,
+			preload: path.join(ROOT_PATH, "dist-electron", "preload.js"),
 		},
 	});
 
 	if (process.env.NODE_ENV === "development") {
-		win.loadURL("http://localhost:5173");
+		console.log("Loading development URL...");
+		win.loadURL("http://localhost:5173").catch(console.error);
+		win.webContents.openDevTools();
 	} else {
-		win.loadFile(path.join(__dirname, "../dist/index.html"));
+		console.log("Loading production file...");
+		const indexPath = path.join(ROOT_PATH, "dist", "index.html");
+		console.log("Index path:", indexPath);
+		win.loadFile(indexPath).catch(console.error);
 	}
 
-	// 添加选择文件夹的IPC监听器
 	ipcMain.handle("select-folder", async () => {
 		const result = await dialog.showOpenDialog(win, {
 			properties: ["openDirectory"],
 		});
 		return result.filePaths[0];
 	});
-}
 
-app.whenReady().then(() => {
-	createWindow();
-});
+	// 添加错误处理
+	win.webContents.on(
+		"did-fail-load",
+		(event, errorCode, errorDescription) => {
+			console.error("Page failed to load:", errorCode, errorDescription);
+		}
+	);
+}
+app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
 		app.quit();
+	}
+});
+
+app.on("activate", () => {
+	if (BrowserWindow.getAllWindows().length === 0) {
+		createWindow();
 	}
 });
