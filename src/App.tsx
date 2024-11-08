@@ -10,6 +10,7 @@ function App() {
 	const [selectedNode, setSelectedNode] = useState<any | null>(null);
 	const [currentView, setCurrentView] = useState<"tree" | "list">("tree");
 	const [zoom, setZoom] = useState(0.8);
+	const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
 	const handleSelectFolder = async () => {
 		try {
@@ -33,6 +34,16 @@ function App() {
 		setCurrentView(view);
 	};
 
+	const handleCloseInfo = () => {
+		setSelectedNode(null);
+	};
+
+	// 展开所有节点
+	const handleExpandAll = () => {};
+
+	// 折叠所有节点
+	const handleCollapseAll = () => {};
+
 	return (
 		<div className="app-container">
 			<div className="header">
@@ -49,8 +60,8 @@ function App() {
 						<ViewControls
 							onZoomIn={handleZoomIn}
 							onZoomOut={handleZoomOut}
-							onExpandAll={() => {}}
-							onCollapseAll={() => {}}
+							onExpandAll={handleExpandAll}
+							onCollapseAll={handleCollapseAll}
 							onViewChange={handleViewChange}
 							currentView={currentView}
 						/>
@@ -74,7 +85,10 @@ function App() {
 				</div>
 				{selectedNode && (
 					<div className="info-panel">
-						<FileInfo node={selectedNode} />
+						<FileInfo
+							node={selectedNode}
+							onClose={handleCloseInfo}
+						/>
 					</div>
 				)}
 			</div>

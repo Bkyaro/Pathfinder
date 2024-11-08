@@ -28,16 +28,7 @@ export const FileTree: React.FC<FileTreeProps> = ({
 	};
 
 	const renderCustomNode = ({ nodeDatum, toggleNode }: any) => (
-		<g
-			onClick={() => {
-				toggleNode();
-				onNodeSelect({
-					name: nodeDatum.name,
-					path: nodeDatum.attributes.path,
-					type: nodeDatum.attributes.type,
-				});
-			}}
-		>
+		<g>
 			<circle
 				r={10}
 				fill={
@@ -45,8 +36,22 @@ export const FileTree: React.FC<FileTreeProps> = ({
 						? "#E3A008"
 						: "#2B6CB0"
 				}
+				onClick={toggleNode}
 			/>
-			<text fill="black" strokeWidth="0.5" x={15} dy="0.31em">
+			<text
+				fill="black"
+				strokeWidth="0.5"
+				x={15}
+				dy="0.31em"
+				onClick={() =>
+					onNodeSelect({
+						name: nodeDatum.name,
+						path: nodeDatum.attributes.path,
+						type: nodeDatum.attributes.type,
+					})
+				}
+				style={{ cursor: "pointer" }}
+			>
 				{nodeDatum.name}
 			</text>
 			<text fill="gray" fontSize="10" x={15} dy="20">

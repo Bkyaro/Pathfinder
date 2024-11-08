@@ -4,9 +4,10 @@ import { FileNode } from "../utils/fileSystem";
 
 interface FileInfoProps {
 	node: FileNode | null;
+	onClose: () => void;
 }
 
-export const FileInfo: React.FC<FileInfoProps> = ({ node }) => {
+export const FileInfo: React.FC<FileInfoProps> = ({ node, onClose }) => {
 	const [stats, setStats] = React.useState<any>(null);
 
 	React.useEffect(() => {
@@ -40,7 +41,12 @@ export const FileInfo: React.FC<FileInfoProps> = ({ node }) => {
 
 	return (
 		<div className="file-info">
-			<h3>{node.name}</h3>
+			<div className="file-info-header">
+				<h3>{node.name}</h3>
+				<button className="close-button" onClick={onClose}>
+					✕
+				</button>
+			</div>
 			<div className="info-grid">
 				<div className="info-item">
 					<span className="label">类型：</span>

@@ -17,6 +17,14 @@
 	background-color: #f0f0f0;
 }
 
+.list-item .toggle-icon {
+	margin-right: 8px;
+	cursor: pointer;
+	width: 16px;
+	text-align: center;
+	user-select: none;
+}
+
 .list-item .icon {
 	margin-right: 8px;
 	font-size: 16px;
@@ -31,4 +39,8 @@
 	color: #666;
 	font-size: 12px;
 	margin-left: 8px;
+}
+
+.children {
+	margin-left: 16px;
 }
