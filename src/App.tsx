@@ -53,12 +53,28 @@ function App() {
 	// 折叠所有节点
 	const handleCollapseAll = () => {};
 
+	// 重置
+	const handleReset = () => {
+		setTreeData(null);
+		setSearchTerm("");
+		setSelectedNode(null);
+		setExpandedNodes(new Set());
+		setZoom(0.8);
+	};
+
 	return (
 		<div className="app-container">
 			<div className="header">
 				<button onClick={handleSelectFolder}>选择文件夹</button>
 				{treeData && (
 					<>
+						<button
+							onClick={handleReset}
+							className="reset-button"
+							title="清除当前选择"
+						>
+							重置
+						</button>
 						<input
 							type="text"
 							placeholder="搜索文件或文件夹..."

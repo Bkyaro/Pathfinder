@@ -47,3 +47,48 @@
 	height: 100%;
 	color: #666;
 }
+
+/* ... 其他样式保持不变 ... */
+
+.reset-button {
+	padding: 0.5rem 1rem;
+	background-color: #ef4444;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.reset-button:hover {
+	background-color: #dc2626;
+}
+
+.reset-button:active {
+	background-color: #b91c1c;
+}
+
+/* 优化头部按钮组的样式 */
+.header button {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.header button:not(.reset-button) {
+	background-color: #1890ff;
+	color: white;
+}
+
+.header button:not(.reset-button):hover {
+	background-color: #40a9ff;
+}
+
+.header button:not(.reset-button):active {
+	background-color: #096dd9;
+}
