@@ -70,6 +70,7 @@ export const FileTree: React.FC<FileTreeProps> = ({
 				}
 				onClick={toggleNode}
 			/>
+			<title>{nodeDatum.name}</title> {/* 添加悬停提示 */}
 			<text
 				fill="black"
 				strokeWidth="0.5"
@@ -82,11 +83,23 @@ export const FileTree: React.FC<FileTreeProps> = ({
 						type: nodeDatum.attributes.type,
 					})
 				}
-				style={{ cursor: "pointer" }}
+				style={{
+					cursor: "pointer",
+					fontSize: "14px",
+				}}
 			>
-				{nodeDatum.name}
+				{/* 如果文件名超过20个字符则截断 */}
+				{nodeDatum.name.length > 20
+					? nodeDatum.name.slice(0, 20) + "..."
+					: nodeDatum.name}
 			</text>
-			<text fill="gray" fontSize="10" x={15} dy="20">
+			<text
+				fill="gray"
+				fontSize="10"
+				x={15}
+				dy="20"
+				style={{ fontSize: "12px" }}
+			>
 				{nodeDatum.attributes.type}
 			</text>
 		</g>
