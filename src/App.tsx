@@ -3,6 +3,15 @@ import "./App.css";
 import { FileTree } from "./components/FileTree";
 import { FileInfo } from "./components/FileInfo";
 import { ViewControls } from "./components/ViewControls";
+import { FileNode } from "./utils/fileSystem";
+
+export interface FileTreeProps {
+	data: FileNode;
+	zoom: number;
+	onNodeSelect: (node: FileNode) => void;
+	view: "tree" | "list";
+	searchTerm: string; // 新增
+}
 
 function App() {
 	const [treeData, setTreeData] = useState<any | null>(null);
@@ -76,6 +85,7 @@ function App() {
 							zoom={zoom}
 							onNodeSelect={handleNodeSelect}
 							view={currentView}
+							searchTerm={searchTerm}
 						/>
 					) : (
 						<div className="empty-state">
