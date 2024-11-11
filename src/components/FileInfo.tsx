@@ -26,6 +26,19 @@ export const FileInfo: React.FC<FileInfoProps> = ({ node, onClose }) => {
 		loadStats();
 	}, [node]);
 
+	const handleOpenPath = async () => {
+		if (!node) return;
+
+		try {
+			const success = await window.electronAPI.openPath(node.path);
+			if (!success) {
+				console.error("无法打开路径");
+			}
+		} catch (error) {
+			console.error("打开路径时出错:", error);
+		}
+	};
+
 	if (!node || !stats) return null;
 
 	const formatSize = (bytes: number) => {
@@ -63,6 +76,13 @@ export const FileInfo: React.FC<FileInfoProps> = ({ node, onClose }) => {
 				<div className="info-item">
 					<span className="label">修改时间：</span>
 					<span>{new Date(stats.modified).toLocaleString()}</span>
+				</div>
+				<div className="info-item">
+					<button className="open-button" onClick={handleOpenPath}>
+						{node.type === "directory"
+							? "打开文件夹"
+							: "在文件夹中显示"}
+					</button>
 				</div>
 			</div>
 		</div>

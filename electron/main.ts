@@ -1,6 +1,24 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { shell } = require("electron");
+
+// 打开指定目录文件夹
+ipcMain.handle("open-path", async (_, filePath: string) => {
+	try {
+		// 如果是文件，则打开其所在文件夹并选中该文件
+		if (fs.statSync(filePath).isFile()) {
+			await shell.showItemInFolder(filePath);
+		} else {
+			// 如果是文件夹，直接打开文件夹
+			await shell.openPath(filePath);
+		}
+		return true;
+	} catch (error) {
+		console.error("打开路径失败:", error);
+		return false;
+	}
+});
 
 // 使用 process.cwd() 获取当前工作目录
 const ROOT_PATH = process.cwd();
@@ -59,7 +77,10 @@ function createWindow() {
 		if (result.filePaths[0]) {
 			const dirPath = result.filePaths[0];
 			const treeData = scanDirectory(dirPath);
-            console.log(" { path: dirPath, treeData }", { path: dirPath, treeData })
+			console.log(" { path: dirPath, treeData }", {
+				path: dirPath,
+				treeData,
+			});
 			return { path: dirPath, treeData };
 		}
 		return null;

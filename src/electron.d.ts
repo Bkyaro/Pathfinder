@@ -5,6 +5,7 @@ interface ElectronAPI {
 		created: Date;
 		modified: Date;
 	}>;
+	openPath: (path: string) => Promise<boolean>;
 }
 
 interface Window {
