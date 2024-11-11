@@ -20,15 +20,19 @@ function App() {
 	const [currentView, setCurrentView] = useState<"tree" | "list">("tree");
 	const [zoom, setZoom] = useState(0.8);
 	const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSelectFolder = async () => {
 		try {
+			setIsLoading(true);
 			const result = await window.electronAPI.selectFolder();
 			if (result) {
 				setTreeData(result.treeData);
 			}
 		} catch (error) {
 			console.error("选择文件夹时出错:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -65,7 +69,9 @@ function App() {
 	return (
 		<div className="app-container">
 			<div className="header">
-				<button onClick={handleSelectFolder}>选择文件夹</button>
+				<button onClick={handleSelectFolder} disabled={isLoading}>
+					{isLoading ? "加载中..." : "选择文件夹"}
+				</button>
 				{treeData && (
 					<>
 						<button
@@ -95,7 +101,12 @@ function App() {
 			</div>
 			<div className="main-content">
 				<div className="tree-container">
-					{treeData ? (
+					{isLoading ? (
+						<div className="loading-state">
+							<div className="loading-spinner"></div>
+							<span>正在加载文件夹结构...</span>
+						</div>
+					) : treeData ? (
 						<FileTree
 							data={treeData}
 							zoom={zoom}
